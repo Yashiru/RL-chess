@@ -29,7 +29,7 @@ class Piece:
         if piece == "k": # King
             return ((abs(from_square[0] - to_square[0]) == abs(from_square[1] - to_square[1])) and (abs(from_square[0] - to_square[0]) == 1)) or ((from_square[0] == to_square[0] and abs(from_square[1] - to_square[1]) == 1) or (from_square[1] == to_square[1] and abs(from_square[0] - to_square[0]) == 1))
         if piece == "p": # pion
-            if givenPiece.GetTeam() == 0:
+            if self.GetTeam() == 0:
                 if from_square[1] == 1:
                     return from_square[0] == to_square[0] and (from_square[1] - to_square[1] == -1 or from_square[1] - to_square[1] == -2)
                 else:
@@ -39,3 +39,4 @@ class Piece:
                     return from_square[0] == to_square[0] and (from_square[1] - to_square[1] == 1 or from_square[1] - to_square[1] == 2)
                 else:
                     return from_square[0] == to_square[0] and from_square[1] - to_square[1] == 1 
+

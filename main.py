@@ -1,3 +1,3 @@
 import chess
 board = chess.Board()
-print(board.GetEnvironnement())
+board.Move(board.C1, board.E3)
