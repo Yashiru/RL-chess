@@ -84,7 +84,17 @@ class Board:
             # opponent's K = 11
             # opponent's P = 12
 
-        self.letterPieces = [["T", "C", "F", "Q", "K", "F", "C", "T"], ["P", "P", "P", "P", "P", "P", "P", "P"], [".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", "."], ["p", "p", "p", "p", "p", "p", "p", "p"], ["t", "c", "f", "q", "k", "f", "c", "t"]]
+        self.letterPieces = [
+            ["T", "C", "F", "Q", "K", "F", "C", "T"], 
+            ["*", "*", "*", "P", "P", "P", "P", "P"],
+            [".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", "."], 
+            ["p", "p", "p", "p", "p", "p", "p", "p"], 
+            ["t", "c", "f", "q", "k", "f", "c", "t"]
+        ]
+
         self.pieces = []
         self.data = data.Data(self)
         i = 0
@@ -130,6 +140,7 @@ class Board:
                     self.pieces[lineCounter].append(newPiece)
                 i = i+1
             lineCounter = lineCounter+1
+        print(self.pieces)
 
 
     def Board(self):
@@ -155,7 +166,7 @@ class Board:
         temp_to_square[0] = to_square[0]-1
         temp_to_square[1] = to_square[1]-1
 
-        print(self.VerifyMoveLegallity(self.pieces[temp_from_square[1]][temp_from_square[0]], temp_from_square, temp_to_square))
+        return self.VerifyMoveLegallity(self.pieces[temp_from_square[1]][temp_from_square[0]], temp_from_square, temp_to_square)
 
         # if self.VerifyMoveLegallity(self.pieces[temp_from_square[1]][temp_from_square[0]], temp_from_square, temp_to_square):
         #     self.VerifyMovementFreedomness(self.pieces[temp_from_square[1]][temp_from_square[0]], temp_from_square, temp_to_square)
