@@ -193,13 +193,13 @@ class Board:
             return self.CheckForPiecePresenceInEndSquareWithJump(from_square, to_square)
 
         if piece == "q": # Queen
-            return
+            return True
 
         if piece == "k": # King
-            return
+            return True
 
         if piece == "p": # pion
-            return
+            return True
 
             
 
