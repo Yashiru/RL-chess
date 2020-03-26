@@ -71,22 +71,10 @@ class Board:
     def __init__(self):
         self.lines = ["A", "B", "C", "D", "E", "F", "G", "H"]
         self.envPiece = [0.02096, 0.04247, 0.01837, 0.06111, 0.09933, 0.06244, 0.07424, 0.03588, 0.02943, 0.07676, 0.05608, 0.03618]
-            # T = 1
-            # C = 2
-            # F = 3
-            # Q = 4
-            # K = 5
-            # P = 6
-            # opponent's T = 7
-            # opponent's C = 8
-            # opponent's F = 9
-            # opponent's Q = 10
-            # opponent's K = 11
-            # opponent's P = 12
 
         self.letterPieces = [
             ["T", "C", "F", "Q", "K", "F", "C", "T"], 
-            ["*", "*", "*", "P", "P", "P", "P", "P"],
+            ["P", "P", "P", "P", "P", "P", "P", "P"], 
             [".", ".", ".", ".", ".", ".", ".", "."], 
             [".", ".", ".", ".", ".", ".", ".", "."], 
             [".", ".", ".", ".", ".", ".", ".", "."], 
@@ -94,9 +82,11 @@ class Board:
             ["p", "p", "p", "p", "p", "p", "p", "p"], 
             ["t", "c", "f", "q", "k", "f", "c", "t"]
         ]
-
-        self.pieces = []
         self.data = data.Data(self)
+        self.LoadPieceObjects()
+
+    def LoadPieceObjects(self):
+        self.pieces = []
         i = 0
         lineCounter = 0
         for line in self.letterPieces:
@@ -132,15 +122,20 @@ class Board:
 
                 envVal = self.envPiece[envIndex]
 
-                if i < 16:
+                if i < 16 and letter != ".":
                     newPiece = piece.Piece(letter, 0, envVal)
                     self.pieces[lineCounter].append(newPiece)
-                else:
+                if i >= 16 and letter != ".":
                     newPiece = piece.Piece(letter, 1, envVal)
                     self.pieces[lineCounter].append(newPiece)
+                if letter == ".":
+                    newPiece = piece.Piece(".", -1, 0)
+                    self.pieces[lineCounter].append(newPiece)
+
                 i = i+1
             lineCounter = lineCounter+1
-        print(self.pieces)
+
+        print(self.Board())
 
 
     def Board(self):
@@ -166,12 +161,21 @@ class Board:
         temp_to_square[0] = to_square[0]-1
         temp_to_square[1] = to_square[1]-1
 
-        return self.VerifyMoveLegallity(self.pieces[temp_from_square[1]][temp_from_square[0]], temp_from_square, temp_to_square)
+        # return self.VerifyMoveLegallity(self.pieces[temp_from_square[1]][temp_from_square[0]], temp_from_square, temp_to_square)
+        pieceInSquare = self.GetPieceInSquare(temp_from_square)
+        freedom = self.VerifyMovementFreedomness(pieceInSquare, temp_from_square, temp_to_square)
+        if self.VerifyMoveLegallity(pieceInSquare, temp_from_square, temp_to_square) and freedom[0] == True:
+            self.MovePiece(pieceInSquare, temp_from_square, temp_to_square)
 
-        # if self.VerifyMoveLegallity(self.pieces[temp_from_square[1]][temp_from_square[0]], temp_from_square, temp_to_square):
-        #     self.VerifyMovementFreedomness(self.pieces[temp_from_square[1]][temp_from_square[0]], temp_from_square, temp_to_square)
-        # else:
-        #     return False
+        else:
+            return False
+
+    def MovePiece(self, givenPiece, from_square, to_square):
+        self.letterPieces[from_square[1]][from_square[0]] = "."
+        self.letterPieces[to_square[1]][to_square[0]] = givenPiece.DisplayLetter()
+        self.pieces[from_square[1]][from_square[0]] = piece.Piece(".", -1, 0)
+        self.pieces[to_square[1]][to_square[0]] = givenPiece
+        print(self.Board())
         
     def VerifyMoveLegallity(self, givenPiece, from_square, to_square):
         if givenPiece.DisplayLetter().lower() == ".":
@@ -181,32 +185,102 @@ class Board:
             return givenPiece.VerifyMoveLegallity(from_square, to_square)
 
     def VerifyMovementFreedomness(self, givenPiece, from_square, to_square):
+        piece = givenPiece.DisplayLetter().lower()
         if piece == "t": # Tour
-        
-            return
+            return self.CheckForPiecePresenceInLine(from_square, to_square)
+
         if piece == "f": # fou
+            return self.CheckForPiecePresenceInDiagonal(from_square, to_square)
 
-            return
         if piece == "c": # cavalier
+            return self.CheckForPiecePresenceInEndSquareWithJump(from_square, to_square)
 
-            return
         if piece == "q": # Queen
+            return True
 
-            return
         if piece == "k": # King
+            return True
 
-            return
         if piece == "p": # pion
+            return True
 
-            return
             
 
     def CheckForPiecePresenceInLine(self, from_square, to_square):
+        movementFreedom = True
+        hitEnemy = False
+        if (self.GetPieceInSquare(from_square).GetTeam() != self.GetPieceInSquare(to_square).GetTeam()) and (self.GetPieceInSquare(from_square).DisplayLetter() != "." and self.GetPieceInSquare(to_square).DisplayLetter() != "."):
+            hitEnemy = True
 
-        return
+        if from_square[0] == to_square[0] and from_square[1] < to_square[1]:
+            for i in range(from_square[1]+1, to_square[1]):
+                if self.letterPieces[i][from_square[0]] != ".":
+                    print("Movement is not free")
+                    movementFreedom = False
+            if self.GetPieceInSquare(to_square).DisplayLetter() != "." and hitEnemy == False:
+                print("End case is a team piece")
+                movementFreedom = False
+
+        if from_square[0] == to_square[0] and from_square[1] > to_square[1]:
+            for i in range(to_square[1], from_square[1]):
+                if self.letterPieces[i][from_square[0]] != ".":
+                    print("Movement is not free")
+                    movementFreedom = False
+            if self.GetPieceInSquare(to_square).DisplayLetter() != "." and hitEnemy == False:
+                print("End case is a team piece")
+                movementFreedom = False
+
+
+
+        if from_square[1] == to_square[1] and from_square[0] < to_square[0]:
+            for i in range(from_square[0]+1, to_square[0]):
+                if self.letterPieces[from_square[1]][i] != ".":
+                    print("Movement is not free")
+                    movementFreedom = False
+            if self.GetPieceInSquare(to_square).DisplayLetter() != "." and hitEnemy == False:
+                movementFreedom = False
+                print("End case is a team piece")
+
+        if from_square[1] == to_square[1] and from_square[0] > to_square[0]:
+            for i in range(to_square[0], from_square[0]-1):
+                if self.letterPieces[from_square[1]][i] != ".":
+                    print("Movement is not free")
+                    movementFreedom = False
+            if self.GetPieceInSquare(to_square).DisplayLetter() != "." and hitEnemy == False:
+                movementFreedom = False
+                print("End case is a team piece")
+
+        return [movementFreedom, hitEnemy]
+
+    def CheckForPiecePresenceInEndSquareWithJump(self, from_square, to_square):
+        movementFreedom = True
+        hitEnemy = False
+        if (self.GetPieceInSquare(from_square).GetTeam() != self.GetPieceInSquare(to_square).GetTeam()) and (self.GetPieceInSquare(from_square).DisplayLetter() != "." and self.GetPieceInSquare(to_square).DisplayLetter() != "."):
+            hitEnemy = True
+        if self.GetPieceInSquare(from_square).GetTeam() == self.GetPieceInSquare(to_square).GetTeam():
+            movementFreedom = False
+
+        return [movementFreedom, hitEnemy]
         
     def CheckForPiecePresenceInDiagonal(self, from_square, to_square):
-        return
+        if to_square[0] > from_square[0]:
+            if to_square[1] > from_square[1]: #droite bas
+                for i in range(from_square[1], to_square[1]):
+                    print([to_square[0]+i, to_square[1]+i])
+                    print(self.GetPieceInSquare([to_square[0]+i, to_square[1]+i]).DisplayLetter())
+                   
+        return [False, False]
+
+        #     else: #droite haut
+
+        # else:
+        #     if to_square[1] > to_square[1]: #gauche bas
+
+        #     else: #gauche haut
+        
 
     def CheckForPiecePresenceInL(self, from_square, to_square):
         return
+
+    def GetPieceInSquare(self, square):
+        return self.pieces[square[1]][square[0]]

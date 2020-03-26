@@ -59,5 +59,5 @@ class Piece:
                     return from_square[1] - to_square[1] == 1
 
         if piece == "-": # bouffon
+            return from_square[0] == to_square[0] and from_square[1] - to_square[1] == 1 
 
-            return 
