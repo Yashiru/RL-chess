@@ -6,6 +6,8 @@ class Piece:
             self.envValue = envVal
         else:
             self.envValue = 0
+            if letter == "c":
+                self.canJump = true
 
     def DisplayLetter(self):
         return self.letter
