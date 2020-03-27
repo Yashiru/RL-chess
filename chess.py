@@ -143,11 +143,16 @@ class Board:
         return self.DisplayBoard()
 
     def DisplayBoard(self):
-        displayedBoard = ""
+        displayedBoard = "   A B C D E F G H\n\n"
+        lineCounter = 1
+        columnWrited = False
+
         for line in self.pieces:
+            displayedBoard = displayedBoard + str(lineCounter) + "  "
             for piece in line:
                 displayedBoard = displayedBoard + piece.DisplayLetter() + " "
             displayedBoard = displayedBoard + "\n"
+            lineCounter = lineCounter + 1
         return displayedBoard
     
     def GetEnvironnement(self):
