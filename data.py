@@ -13,7 +13,7 @@ class Data:
             for letter in line:
                 for lineForLetter in self.board.letterPieces:
                     for letterForLetter in line:
-                        action = self.board.lines[fromLetterCounter] + "" + str(fromlineCounter+1) + " " + self.board.lines[toLetterCounter]+ "" + str(tolineCounter+1)
+                        action = self.board.lines[fromLetterCounter] + "" + str(fromlineCounter+1) + "-" + self.board.lines[toLetterCounter]+ "" + str(tolineCounter+1)
                         actionTable.append(action)
                         toLetterCounter = toLetterCounter + 1
                     tolineCounter = tolineCounter + 1
@@ -35,6 +35,4 @@ class Data:
             if lineCounter < 7:
                 env .append([])
             lineCounter = lineCounter + 1
-
-        print(env)
         return env

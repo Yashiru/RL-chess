@@ -85,6 +85,7 @@ class Board:
         self.data = data.Data(self)
         self.LoadPieceObjects()
 
+
     def LoadPieceObjects(self):
         self.pieces = []
         i = 0
